@@ -1,26 +1,85 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Button from "@atlaskit/button";
+import Form, { FormFooter } from "@atlaskit/form";
+import styled from "styled-components";
+import Name from "./formFields/name/Name";
+import Email from "./formFields/email/Email";
+import Phone from "./formFields/phone/Phone";
+import Country from "./formFields/country/Country";
+import Password from "./formFields/password/Password";
+import Description from "./formFields/description/Description";
+import SuccessFlag from "./formFields/successFlag/SuccessFlag";
+import Checkbox from "./formFields/checkbox/Checkbox";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface Country {
+  abbr: string;
+  code: string;
+  icon: string;
+  name: string;
 }
+
+export interface FormData {
+  name: string;
+  email: string;
+  phone: number;
+  country: Country;
+  password: string;
+  checkbox: boolean;
+  description: string;
+}
+
+const Wrapper = styled.div`
+  display: flex;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px;
+  flex-direction: column;
+`;
+
+const App: React.FC = () => {
+  const [isSuccessFlagVisible, setIsSuccessFlagVisible] = useState(false);
+
+  const handleFormSubmit = (): Promise<undefined> => {
+    return new Promise(resolve => setTimeout(resolve, 2000)).then(() => {
+      setIsSuccessFlagVisible(true);
+      return undefined;
+    });
+  };
+
+  const handleFlagDismiss = (): void => {
+    setIsSuccessFlagVisible(false);
+  };
+
+  return (
+    <Wrapper>
+      {isSuccessFlagVisible && <SuccessFlag onDismiss={handleFlagDismiss} />}
+      {!isSuccessFlagVisible && (
+        <Form<FormData> onSubmit={handleFormSubmit}>
+          {({ formProps, submitting }): React.ReactNode => (
+            <form {...formProps}>
+              <Name name="name" />
+              <Email name="email" />
+              <Phone name="phone" />
+              <Country name="country" />
+              <Password name="password" />
+              <Checkbox name="checkbox" />
+              <Description name="description" />
+              <FormFooter>
+                <Button
+                  type="submit"
+                  appearance="primary"
+                  isLoading={submitting}
+                >
+                  Submit
+                </Button>
+              </FormFooter>
+            </form>
+          )}
+        </Form>
+      )}
+    </Wrapper>
+  );
+};
 
 export default App;
